@@ -14,11 +14,19 @@ def add_product(name, price):
         products[name] = price
         print(f"Товар '{name}' добавлен с ценой {price} сом.")
 
+def update_product_price(name, new_price):
+    if name in products:
+        old_price = products[name]
+        products[name] = new_price
+        print(f"Цена товара '{name}' изменена с {old_price} сом. на {new_price} сом.")
+    else:
+        print(f"Товар '{name}' не найден.")
+
 def add_sale(product_name, quantity):
     if product_name not in products:
         print(f"Товар '{product_name}' не найден.")
         return
-
+    
     sale_amount = products[product_name] * quantity
     sales.append({'product': product_name, 'quantity': quantity, 'total': sale_amount})
     print(f"Продано {quantity} шт. '{product_name}' на сумму {sale_amount} сом.")
@@ -34,9 +42,12 @@ def total_revenue():
 
 add_product('фанера', 200)
 add_product('гвоздь', 300)
+update_product_price('доска', 120)
+update_product_price('балка', 280)
 add_sale('фанера', 10)
-add_sale('доска', 7)
 add_sale('балка', 3)
 add_sale('гвоздь', 3)
+add_sale('доска', 2)
+
 view_sales()
 total_revenue()
