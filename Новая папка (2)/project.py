@@ -1,3 +1,5 @@
+import datetime
+
 products = {
     'доска': 100,
     'балка': 250,
@@ -7,43 +9,62 @@ products = {
 
 sales = []
 
-def add_product(name, price):
-    if name in products:
-        print(f"Товар '{name}' уже существует.")
-    else:
-        products[name] = price
-        print(f"Товар '{name}' добавлен с ценой {price} сом.")
+def log_to_file(message):
+    with open('log.txt', 'a', encoding='utf-8') as file:
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        file.write(f"[{timestamp}] {message}\n")
 
-def update_product_price(name, new_price):
+def add_or_update_product(name, price):
     if name in products:
         old_price = products[name]
-        products[name] = new_price
-        print(f"Цена товара '{name}' изменена с {old_price} сом. на {new_price} сом.")
+        if old_price != price:
+            products[name] = price
+            message = f"Товар '{name}' уже существует. Цена обновлена с {old_price} сом. на {price} сом."
+        else:
+            message = f"Товар '{name}' уже существует. Цена осталась прежней: {old_price} сом."
     else:
-        print(f"Товар '{name}' не найден.")
+        products[name] = price
+        message = f"Товар '{name}' добавлен с ценой {price} сом."
+    
+    print(message)
+    log_to_file(message)
 
 def add_sale(product_name, quantity):
     if product_name not in products:
-        print(f"Товар '{product_name}' не найден.")
+        message = f"Товар '{product_name}' не найден."
+        print(message)
+        log_to_file(message)
         return
-    
+
     sale_amount = products[product_name] * quantity
     sales.append({'product': product_name, 'quantity': quantity, 'total': sale_amount})
-    print(f"Продано {quantity} шт. '{product_name}' на сумму {sale_amount} сом.")
+    message = f"Продано {quantity} шт. '{product_name}' на сумму {sale_amount} сом."
+    print(message)
+    log_to_file(message)
 
 def view_sales():
-    print("Все продажи:")
+    message = "\nВсе продажи:"
+    print(message)
+    log_to_file(message)
     for sale in sales:
-        print(f"{sale['quantity']} шт. '{sale['product']}' - {sale['total']} сом.")
+        message = f"{sale['quantity']} шт. '{sale['product']}' - {sale['total']} сом."
+        print(message)
+        log_to_file(message)
 
 def total_revenue():
     total = sum(sale['total'] for sale in sales)
-    print(f"Общая выручка: {total} сом.")
+    message = f"\nОбщая выручка: {total} сом."
+    print(message)
+    log_to_file(message)
+    
+    separator = "-" * 40
+    print(separator)
+    log_to_file(separator)
 
-add_product('фанера', 200)
-add_product('гвоздь', 300)
-update_product_price('доска', 120)
-update_product_price('балка', 280)
+add_or_update_product('фанера', 250)
+add_or_update_product('гвоздь', 300)
+add_or_update_product('доска', 120)  
+add_or_update_product('балка', 250)
 add_sale('фанера', 10)
 add_sale('балка', 3)
 add_sale('гвоздь', 3)
